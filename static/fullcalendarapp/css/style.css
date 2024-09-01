@@ -1,0 +1,41 @@
+/* 土日の色変更 */
+td.fc-day-sat {
+    background-color: #eaf4ff;
+}
+td.fc-day-sun {
+    background-color: #ffeaea;
+}
+
+
+/* モーダルのcss */
+.modal_label {
+    border:solid 0.1rem black;
+    padding:0.25rem;
+    cursor:pointer;
+}
+.modal_body { display:none; }
+.modal_chk { display:none; }
+.modal_bg {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    background:rgba(0,0,0,0.8);
+    cursor:pointer;
+
+    /* 調整が必要 */
+    /* z-index: 99; */
+}
+.modal_content {
+    position:fixed;
+    top:50%;
+    left:50%;
+    width:80%;
+    height:80%;
+    transform:translate(-50%,-50%);
+    background:white;
+
+    z-index: 100;
+}
+input[type="checkbox"]#modal_chk:checked + .modal_body { display:block; }

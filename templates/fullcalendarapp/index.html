@@ -1,0 +1,112 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Todoリスト</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.6/index.global.min.js"></script>
+    
+    <!-- イベントを検索する機能を実装する 工事中 -->
+    <input type="text" id="search" placeholder="イベントを検索">
+
+    <!-- イベントのカテゴリ別に表示・非表示を制御したい 工事中 -->
+    <div id="label">
+        <a href="javascript:void(0);" class="label-link-1" onclick="return change(1);">
+            <span style="color:#2ECCFA;">■</span>
+            ラベル1
+        </a>
+        <a href="javascript:void(0);" class="label-link-2" onclick="return change(2);">
+            <span style="color:#B40486;">■</span>
+            ラベル2
+        </a>
+        <a href="javascript:void(0);" class="label-link-3" onclick="return change(3);">
+            <span style="color:#B45F04;">■</span>
+            ラベル3
+        </a>
+    </div>
+
+    
+
+    {# TODO:カレンダーには、やってないデータだけ表示する。#}
+    <script>
+        // const events =
+        //     [
+        //                 // イベントごとに装飾を施す
+        //                 // https://fullcalendar.io/docs/event-object
+        //                 {% for todo in todos %}
+        //                 {
+        //                             id:"{{ todo.id }}",
+        //                             title:"{{ todo.content }}",
+        //                             start:"{{ todo.deadline|date:'Y-m-d' }}",
+        //                             backgroundColor: {% if not todo.done %}"deepskyblue"{% else %}"gray"{% endif %}, //進捗状況に応じて色分けできる
+        //                             borderColor: "white"
+        //                 },
+        //                 {% endfor %}
+        //         ] 
+        const todo_url = "{% url 'fullcalendarapp:todo' %}";
+    </script>
+
+    <!-- jsの設定参照 -->
+    <script src="{% static 'fullcalendarapp/js/script.js' %}"></script>
+
+    <!-- cssの設定参照 -->
+    <link rel="stylesheet" href="{% static 'fullcalendarapp/css/style.css' %}">
+
+
+</head>
+<body>
+
+    <main class="mx-2">
+        {# ここが投稿用フォーム #}
+
+        <div class="row mx-0">
+            <div class="col-md-6">
+                <div id='calendar' style=""></div>
+            </div>
+            <div class="col-md-6">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input name="deadline" type="text" readonly>
+                    <textarea class="form-control" name="content"></textarea>
+                    <input type="submit" value="送信">
+                </form>
+
+                {# TODO: ここはタブシステムを使って完了と未完を表示切り替えする。 #}
+                {# https://noauto-nolife.com/post/css3-tab-system/ #}
+                {% for todo in todos %}
+                <div id="todo_{{ todo.id }}" class="border">
+                    <div>期限: {{ todo.deadline }}</div>
+                    <div>やること: {{ todo.content }}</div>
+                    <form class="text-right" action="{% url 'fullcalendarapp:done' todo.id %}" method="post">
+                        {% csrf_token %}
+                        {% if todo.done %}
+                        <input class="btn btn-primary " type="submit" value="完了">
+                        {% else %}
+                        <input class="btn btn-outline-primary " type="submit" value="やった">
+                        {% endif %}
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    {# モーダル領域 #}
+    <input id="modal_chk" class="modal_chk" type="checkbox">
+    <div class="modal_body">
+        <label class="modal_bg" for="modal_chk"></label>
+        <div class="modal_content"></div>
+    </div>
+
+</body>
+</html>
