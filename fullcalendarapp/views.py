@@ -85,3 +85,38 @@ class TodoView(View):
         return JsonResponse(events, safe=False)
 
 todo = TodoView.as_view()
+
+
+
+class TodoCreateView(View):
+    def post(self, request, *args, **kwargs):
+
+        form = TodoForm(request.POST)
+        data = { "success":False }
+
+        if form.is_valid():
+            form.save()
+            data["success"] = True
+        
+        return JsonResponse(data)
+
+todo_create = TodoCreateView.as_view()
+
+
+# 編集のビュー
+class TodoEditView(View):
+    def post(self, request, pk, *args, **kwargs):
+
+        todo = Todo.objects.filter(id=pk).first()
+
+        form = TodoForm(request.POST, instance=todo)
+        data = { "success":False }
+
+        if form.is_valid():
+            form.save()
+            data["success"] = True
+        
+        return JsonResponse(data)
+
+todo_edit = TodoEditView.as_view()
+

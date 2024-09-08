@@ -16,27 +16,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.6/index.global.min.js"></script>
     
-    <!-- イベントを検索する機能を実装する 工事中 -->
-    <input type="text" id="search" placeholder="イベントを検索">
-
-    <!-- イベントのカテゴリ別に表示・非表示を制御したい 工事中 -->
-    <div id="label">
-        <a href="javascript:void(0);" class="label-link-1" onclick="return change(1);">
-            <span style="color:#2ECCFA;">■</span>
-            ラベル1
-        </a>
-        <a href="javascript:void(0);" class="label-link-2" onclick="return change(2);">
-            <span style="color:#B40486;">■</span>
-            ラベル2
-        </a>
-        <a href="javascript:void(0);" class="label-link-3" onclick="return change(3);">
-            <span style="color:#B45F04;">■</span>
-            ラベル3
-        </a>
-    </div>
-
-    
-
     {# TODO:カレンダーには、やってないデータだけ表示する。#}
     <script>
         // const events =
@@ -54,6 +33,7 @@
         //                 {% endfor %}
         //         ] 
         const todo_url = "{% url 'fullcalendarapp:todo' %}";
+        const todo_edit_url = "/todo_edit/"
     </script>
 
     <!-- jsの設定参照 -->
@@ -105,7 +85,24 @@
     <input id="modal_chk" class="modal_chk" type="checkbox">
     <div class="modal_body">
         <label class="modal_bg" for="modal_chk"></label>
-        <div class="modal_content"></div>
+        <div class="modal_content">
+
+            <form id="todo_create_form" action="{% url 'fullcalendarapp:todo_create' %}" method="post">
+                {% csrf_token %}
+                <input name="deadline" type="text" readonly>
+                <textarea class="form-control" name="content"></textarea>
+                <!--                                 ↓submitだと全ページが更新されてしまう -->
+                <input id="todo_create_submit" type="button" value="送信">
+            </form>
+
+            <form id="todo_edit_form" action="" method="post">
+                {% csrf_token %}
+                <input name="deadline" type="text" readonly>
+                <textarea class="form-control" name="content"></textarea>
+                <input id="todo_edit_submit" type="button" value="送信">
+            </form>
+
+        </div>
     </div>
 
 </body>

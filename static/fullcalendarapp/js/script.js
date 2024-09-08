@@ -42,23 +42,18 @@ window.addEventListener("load" , function (){
     }
 
 
-    // toolbarの設定
-    config.headerToolbar = {
-                            start:'title',
-                            center:'newcreate',
-                            end:'today prev,next'
+    // 新規作成ボタンを追加
+    const createButton   = { text: "新規作成", click: openModal }
+    config.customButtons = {
+        createButton,
     }
 
-    // 新規作成ボタンを追加
-    config.customButtons = {
-                            newcreate:{
-                                text:'新規作成',
-                                click: function() {
-                                    alert('clicked the newcreate button!')
-                                    // ここのfunctionでモーダルを表示させたい
-                                }
-                            }
-    }
+    // カレンダーのヘッダーの設定
+    const left      = "createButton";
+    const center    = "title";
+    const right     = "prev,next";
+
+    config.headerToolbar    = { left, center, right };
 
     // イベントを手に入れた時、何らかの処理をしてほしい場合
     /*
@@ -74,6 +69,16 @@ window.addEventListener("load" , function (){
     */
 
     config.eventClick   = (info) => {
+
+        document.querySelector("#todo_edit_form").setAttribute("action", todo_edit_url + info.event.id + "/");
+
+        const deadline = `${info.event.start.getFullYear()}-${("0" + String(info.event.start.getMonth() + 1)).slice("-2")}-${("0" + String(info.event.start.getDate())).slice(-2)}`;
+
+        document.querySelector("#todo_edit_form > [name='deadline']").value = deadline;
+        document.querySelector("#todo_edit_form > [name='content']").value  = info.event.title;
+
+        openModal();
+
         console.log('Event: ' + info.event.id);
         const target = document.getElementById("todo_" + info.event.id );
         if (target){
@@ -85,13 +90,36 @@ window.addEventListener("load" , function (){
 
 
 
+    // 再読込させるためにグローバル化させる
+    // idの属性名と重複しないよう、_objをつけた。
+    window.calendar_obj      = new FullCalendar.Calendar(calendar_elem, config);
+    window.calendar_obj.render();
 
-    const calendar      = new FullCalendar.Calendar(calendar_elem, config);
-    calendar.render();
+    // モーダルの送信ボタンが押されたときの処理
+    document.querySelector("#todo_create_submit").addEventListener("click", () => {
+        send();
+    })
 
+    // モーダルの送信ボタンが押されたときの処理
+    document.querySelector("#todo_edit_submit").addEventListener("click", () => {
+        edit();
+    })
     
 
 });
+
+// モーダルを開く
+const openModal = () => {
+    console.log("モーダルを開く")
+    document.querySelector(".modal_chk").checked = true;
+}
+
+// モーダルを閉じる
+const closeModal = () => {
+    document.querySelector(".modal_chk").checked = false;
+}
+
+
 
 
 
@@ -101,9 +129,11 @@ window.addEventListener("load" , function (){
 const send  = () => {
 
     // フォームの要素を取得
-    const form      = document.querySelector("#form");
+    const form      = document.querySelector("#todo_create_form");
 
+    // Djangoに送信する全データ
     const body      = new FormData(form);
+
     const url       = form.getAttribute("action");
     const method    = form.getAttribute("method");
 
@@ -117,11 +147,16 @@ const send  = () => {
         return response.json();
     })
     .then( data => {
+        closeModal();
 
+        if (data.success) {
+            console.log("投稿完了");
 
-            // TODO：fullcalendar.jsに対してイベントの再読み込みを依頼する
-    
-    
+            // fullcalendar.jsに対してイベントの再読込を依頼
+            // calendar_objはグローバル化しているので再読み込み可能
+            window.calendar_obj.refetchEvents();
+        }
+
     })
     .catch( error => {
         // .then内でエラーが起きているとき、実行(throw new Error()も含む)
@@ -129,3 +164,44 @@ const send  = () => {
     });
 
 }
+
+
+// モーダルで編集するときに、実行する
+const edit  = () => {
+   
+    // フォームの要素を取得
+    const form      = document.querySelector("#todo_edit_form");
+
+    // Djangoに送信する全データ
+    const body      = new FormData(form);
+
+    const url       = form.getAttribute("action");
+    const method    = form.getAttribute("method");
+
+    // fetchを使用してPOSTリクエストを送信
+    fetch( url, { method , body } )
+    .then( response => {
+        // レスポンスのステータスコードが200番代ではないとき、↓を実行。
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then( data => {
+        closeModal();
+
+        if (data.success) {
+            console.log("投稿完了");
+
+            // fullcalendar.jsに対してイベントの再読込を依頼
+            // calendar_objはグローバル化しているので再読み込み可能
+            window.calendar_obj.refetchEvents();
+        }
+
+    })
+    .catch( error => {
+        // .then内でエラーが起きているとき、実行(throw new Error()も含む)
+        console.log(error);
+    });
+
+} 

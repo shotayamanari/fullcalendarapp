@@ -24,8 +24,7 @@ td.fc-day-sun {
     background:rgba(0,0,0,0.8);
     cursor:pointer;
 
-    /* 調整が必要 */
-    /* z-index: 99; */
+    z-index: 99;
 }
 .modal_content {
     position:fixed;
