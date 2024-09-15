@@ -8,7 +8,7 @@ import datetime
 class TodoForm(forms.ModelForm):
     class Meta:
         model   = Todo
-        fields  = [ "deadline","content" ]
+        fields  = [ "deadline","content", "category" ]
 
 class DateSearchForm(forms.Form):
 

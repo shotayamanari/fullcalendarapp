@@ -102,6 +102,14 @@
                 <input id="todo_edit_submit" type="button" value="送信">
             </form>
 
+
+            <form id="todo_filter" action="">
+                    <label><input type="checkbox" name="category" value="0" checked>未分類</label>
+                {% for category in categories %}
+                    <label><input type="checkbox" name="category" value="{{ category.id }}" checked>{{ category.name }}</label>
+                {% endfor %}
+            </form>
+
         </div>
     </div>
 

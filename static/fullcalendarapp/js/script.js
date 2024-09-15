@@ -32,7 +32,7 @@ window.addEventListener("load" , function (){
 	}
 
     // eventsにURLを指定する
-    config.events       = todo_url;
+    // config.events       = todo_url;
 
     // footerに月表示を変更するツールバーを設定する
     config.footerToolbar = {
@@ -44,29 +44,51 @@ window.addEventListener("load" , function (){
 
     // 新規作成ボタンを追加
     const createButton   = { text: "新規作成", click: openModal }
+    const filterButton   = { text: "絞り込み", click: openModal }
     config.customButtons = {
-        createButton,
+        createButton,filterButton
     }
 
     // カレンダーのヘッダーの設定
-    const left      = "createButton";
+    const left      = "createButton,filterButton";
     const center    = "title";
     const right     = "prev,next";
 
     config.headerToolbar    = { left, center, right };
 
-    // イベントを手に入れた時、何らかの処理をしてほしい場合
-    /*
     config.eventSources = [{
                             url: todo_url,
                             method: 'GET',
                             success: (data) => {
-                                // データ取得後に実行したい処理
+                                
                                 console.log('イベントデータが取得されました:', data);
-                                // 例) 右側のデータ一覧をレンダリングし直すなど
+
+
+                                let new_data = [];
+
+                                // チェックされたカテゴリのid(checkboxのvalueの値)のリストを作る
+                                // id="todo_filter"の中にある、[name='category']を取得する
+                                const checkboxes = document.querySelectorAll("#todo_filter input[name='category']");
+
+                                console.log(checkboxes);
+
+                                let selected_categories = [];
+                                for(let checkbox of checkboxes){
+                                    if (checkbox.checked){
+                                        selected_categories.push(Number(checkbox.value));
+                                    }
+                                }
+
+                                for (let d of data){
+                                    if(selected_categories.includes(d.category)){
+                                        new_data.push(d);
+                                    }
+                                }
+
+                                return new_data;
+
                             }
                         }];
-    */
 
     config.eventClick   = (info) => {
 
@@ -104,6 +126,21 @@ window.addEventListener("load" , function (){
     document.querySelector("#todo_edit_submit").addEventListener("click", () => {
         edit();
     })
+
+    // 絞り込みのチェックボックスが変わった時、.refetchEvents()を発動させる
+    const checkboxes = document.querySelectorAll("#todo_filter input[name='category']");
+    for (let checkbox of checkboxes){
+
+        // チェックボックスにイベントをセットする
+        checkbox.addEventListener("change", () => {
+
+            // カレンダーの再読み込み
+            window.calendar_obj.refetchEvents();
+        })
+
+    }
+
+
     
 
 });
@@ -205,3 +242,7 @@ const edit  = () => {
     });
 
 } 
+
+const filterEvents = () => {
+
+}

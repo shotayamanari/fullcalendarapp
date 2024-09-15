@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 
-from .models import Todo
+from .models import Todo,Category
 from .forms import TodoForm,DateSearchForm
 
 # timezoneとdatetimeをimportする
@@ -16,6 +16,7 @@ class IndexView(View):
 
         context             = {}
         context["todos"]    = Todo.objects.order_by("deadline", "dt")
+        context["categories"] = Category.objects.all()
 
 
         return render(request, "fullcalendarapp/index.html", context)
@@ -75,10 +76,17 @@ class TodoView(View):
             event["start"]          = todo.deadline
             event["borderColor"]    = "white"
 
-            if todo.done:
-             event["backgroundColor"] = "gray"
-            else:
-             event["backgroundColor"] = "deepskyblue"
+            event["backgroundColor"] = "green"
+            # event["backgroundColor"] = f"{todo.category.color}"
+            # ↑8月のタスクは管理者サイトで指定したカテゴリ別の色に変更できるが9月のタスクの色が変わらない。
+
+            # カテゴリで絞り込みをするためにも、event["category"]に値を入れる
+            if todo.category:
+                event["category"]   = todo.category.id
+            else: #カテゴリが未指定の場合
+                event["category"]   = 0
+
+
 
             events.append(event)
 
