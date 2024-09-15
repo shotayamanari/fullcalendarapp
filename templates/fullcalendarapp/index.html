@@ -86,29 +86,56 @@
     <div class="modal_body">
         <label class="modal_bg" for="modal_chk"></label>
         <div class="modal_content">
+            <div class="new_create">
+                <h2>新規作成</h2>
+                <form id="todo_create_form" action="{% url 'fullcalendarapp:todo_create' %}" method="post">
+                    {% csrf_token %}
+                    <input name="deadline" type="text" readonly>
+                    <textarea class="form-control" name="content"></textarea>
 
-            <form id="todo_create_form" action="{% url 'fullcalendarapp:todo_create' %}" method="post">
-                {% csrf_token %}
-                <input name="deadline" type="text" readonly>
-                <textarea class="form-control" name="content"></textarea>
-                <!--                                 ↓submitだと全ページが更新されてしまう -->
-                <input id="todo_create_submit" type="button" value="送信">
-            </form>
+                    <!-- カテゴリを選択して送信する -->
+                    <label>カテゴリ:</label>
+                    <select name="category">
+                        {% for category in categories %}
+                        <option value="{{category.id}}">{{category.name}}</option>
+                        {% endfor %}
+                    </select>
+                    <!--  -->
 
-            <form id="todo_edit_form" action="" method="post">
-                {% csrf_token %}
-                <input name="deadline" type="text" readonly>
-                <textarea class="form-control" name="content"></textarea>
-                <input id="todo_edit_submit" type="button" value="送信">
-            </form>
+                    <!--                                 ↓submitだと全ページが更新されてしまう -->
+                    <input id="todo_create_submit" type="button" value="送信">
+                </form>
+            </div>
 
+            <div class="edit_todo">
+                <h2>修正</h2>
+                <form id="todo_edit_form" action="" method="post">
+                    {% csrf_token %}
+                    <input name="deadline" type="text" readonly>
+                    <textarea class="form-control" name="content"></textarea>
 
-            <form id="todo_filter" action="">
-                    <label><input type="checkbox" name="category" value="0" checked>未分類</label>
-                {% for category in categories %}
-                    <label><input type="checkbox" name="category" value="{{ category.id }}" checked>{{ category.name }}</label>
-                {% endfor %}
-            </form>
+                    <!-- カテゴリを選択して送信する -->
+                    <label>カテゴリ:</label>
+                    <select name="category">
+                        {% for category in categories %}
+                        <option value="{{category.id}}">{{category.name}}</option>
+                        {% endfor %}
+                    </select>
+                    <!--  -->
+
+                    <input id="todo_edit_submit" type="button" value="送信">
+                </form>
+            </div> 
+
+            <div class="filter_todo">
+                <h2>タスクの絞り込み</h2>
+                <form id="todo_filter" action="">
+                        <label><input type="checkbox" name="category" value="0" checked>未分類</label>
+                    {% for category in categories %}
+                        <label><input type="checkbox" name="category" value="{{ category.id }}" checked>{{ category.name }}</label>
+                    {% endfor %}
+                </form>
+            </div>
 
         </div>
     </div>

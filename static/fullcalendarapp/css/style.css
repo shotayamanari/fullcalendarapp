@@ -34,7 +34,27 @@ td.fc-day-sun {
     height:80%;
     transform:translate(-50%,-50%);
     background:white;
+    padding: 50px;
 
     z-index: 100;
 }
 input[type="checkbox"]#modal_chk:checked + .modal_body { display:block; }
+
+.modal_body h2{
+    font-weight: bold;
+    color:darkslategray;
+}
+
+.new_create{
+    padding-bottom: 30px ;
+}
+
+
+.edit_todo{
+    padding-bottom: 30px ;
+}
+
+.filter_todo label{
+    margin: 30px;
+    transform: scale(1.4);
+}
