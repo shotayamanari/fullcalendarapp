@@ -52,7 +52,7 @@ window.addEventListener("load" , function (){
     // カレンダーのヘッダーの設定
     const left      = "createButton,filterButton";
     const center    = "title";
-    const right     = "prev,next";
+    const right     = "prev,next,dayGridDay,dayGridWeek,dayGridMonth";
 
     config.headerToolbar    = { left, center, right };
 
@@ -79,9 +79,34 @@ window.addEventListener("load" , function (){
                                     }
                                 }
 
+                                // 指定されたキーワードを取り出す
+                                //                                                               ↓全角スペースを半角スペースに変換　　↓配列から一つずつ取り出して、条件に一致したものだけ配列に含める
+                                const words = document.querySelector("#todo_search_text").value.replace(/　/g," ").split(" ").filter( w => w !== "" );
+                                //                                                                                    ↑半角スペースで区切って配列にする
+
+
+
+
+
+
                                 for (let d of data){
+                                    // カテゴリによる絞りこみ
                                     if(selected_categories.includes(d.category)){
-                                        new_data.push(d);
+
+                                        console.log(words);
+
+                                        // wordsにキーワードがある場合判定する
+                                        if (words.length > 0 ){
+                                            console.log(true);
+
+                                            // キーワードの中の文字列がすべて含まれていれば追加する
+                                            if ( words.every(word => d.title.includes(word))){
+                                                new_data.push(d);
+                                            }
+                                        }
+                                        else{
+                                            new_data.push(d);
+                                        }
                                     }
                                 }
 
@@ -140,8 +165,11 @@ window.addEventListener("load" , function (){
 
     }
 
-
-    
+    // キーワード検索の検索ボタンが押された時にカレンダーを再読み込み
+    const todo_search_submit = document.querySelector("#todo_search_submit");
+    todo_search_submit.addEventListener("click", () => {
+        window.calendar_obj.refetchEvents();
+    });    
 
 });
 

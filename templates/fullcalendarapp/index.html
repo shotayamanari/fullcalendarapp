@@ -87,7 +87,7 @@
         <label class="modal_bg" for="modal_chk"></label>
         <div class="modal_content">
             <div class="new_create">
-                <h2>新規作成</h2>
+                <h2>■ 新規作成</h2>
                 <form id="todo_create_form" action="{% url 'fullcalendarapp:todo_create' %}" method="post">
                     {% csrf_token %}
                     <input name="deadline" type="text" readonly>
@@ -108,7 +108,7 @@
             </div>
 
             <div class="edit_todo">
-                <h2>修正</h2>
+                <h2>■ 修正</h2>
                 <form id="todo_edit_form" action="" method="post">
                     {% csrf_token %}
                     <input name="deadline" type="text" readonly>
@@ -128,13 +128,20 @@
             </div> 
 
             <div class="filter_todo">
-                <h2>タスクの絞り込み</h2>
+                <h2>■ タスクの絞り込み</h2>
                 <form id="todo_filter" action="">
                         <label><input type="checkbox" name="category" value="0" checked>未分類</label>
                     {% for category in categories %}
                         <label><input type="checkbox" name="category" value="{{ category.id }}" checked>{{ category.name }}</label>
                     {% endfor %}
                 </form>
+
+                <!-- 検索機能 -->
+                <form id="todo_search" action="">
+                    <input id="todo_search_text" type="text" placeholder="キーワード検索">
+                    <input id="todo_search_submit" type="button" value="検索">
+                </form>
+
             </div>
 
         </div>

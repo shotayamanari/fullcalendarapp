@@ -76,18 +76,14 @@ class TodoView(View):
             event["start"]          = todo.deadline
             event["borderColor"]    = "white"
 
-            # event["backgroundColor"] = "green"
-            if todo.category:
-                event["backgroundColor"] = f"{todo.category.color}"
-            else:
-                event["backgroundColor"] = "black"                
-            #   ↑カテゴリが未分類の場合、blackにする。
-
             # カテゴリで絞り込みをするためにも、event["category"]に値を入れる
+            # 管理者サイトで指定したカテゴリー別のカラーを適応する
             if todo.category:
                 event["category"]   = todo.category.id
+                event["backgroundColor"] = f"{todo.category.color}"
             else: #カテゴリが未指定の場合
                 event["category"]   = 0
+                event["backgroundColor"] = "black"     
 
 
 
