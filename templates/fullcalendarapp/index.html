@@ -127,6 +127,12 @@
                 </form>
             </div> 
 
+                <form id="todo_delete_form" action="" method="post">
+                    {% csrf_token %}
+                    <input id="todo_delete_submit" type="button" value="削除">
+                </form>
+        
+
             <div class="filter_todo">
                 <h2>■ タスクの絞り込み</h2>
                 <form id="todo_filter" action="">

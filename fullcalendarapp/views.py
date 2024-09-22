@@ -127,3 +127,18 @@ class TodoEditView(View):
 
 todo_edit = TodoEditView.as_view()
 
+
+# 削除のビュー
+class TodoDeleteView(View):
+    def post(self, request, pk, *args, **kwargs):
+
+        data = { "success":False }
+
+        todo = Todo.objects.filter(id=pk).first()
+        todo.delete()
+        
+        data["success"] = True
+        
+        return JsonResponse(data)
+
+todo_delete = TodoDeleteView.as_view()

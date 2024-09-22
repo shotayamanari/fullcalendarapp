@@ -152,6 +152,11 @@ window.addEventListener("load" , function (){
         edit();
     })
 
+    // モーダルの削除ボタンが押されたときの処理
+    document.querySelector("#todo_delete_submit").addEventListener("click", () => {
+        deleteToDo();
+    })
+
     // 絞り込みのチェックボックスが変わった時、.refetchEvents()を発動させる
     const checkboxes = document.querySelectorAll("#todo_filter input[name='category']");
     for (let checkbox of checkboxes){
@@ -236,6 +241,46 @@ const edit  = () => {
    
     // フォームの要素を取得
     const form      = document.querySelector("#todo_edit_form");
+
+    // Djangoに送信する全データ
+    const body      = new FormData(form);
+
+    const url       = form.getAttribute("action");
+    const method    = form.getAttribute("method");
+
+    // fetchを使用してPOSTリクエストを送信
+    fetch( url, { method , body } )
+    .then( response => {
+        // レスポンスのステータスコードが200番代ではないとき、↓を実行。
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then( data => {
+        closeModal();
+
+        if (data.success) {
+            console.log("投稿完了");
+
+            // fullcalendar.jsに対してイベントの再読込を依頼
+            // calendar_objはグローバル化しているので再読み込み可能
+            window.calendar_obj.refetchEvents();
+        }
+
+    })
+    .catch( error => {
+        // .then内でエラーが起きているとき、実行(throw new Error()も含む)
+        console.log(error);
+    });
+
+} 
+
+// モーダルで編集するときに、実行する
+const deleteToDo = () => {
+   
+    // フォームの要素を取得
+    const form      = document.querySelector("#todo_delete_form");
 
     // Djangoに送信する全データ
     const body      = new FormData(form);
